@@ -23,7 +23,7 @@ class KlienFailover:
         self.aktif = 0  # indeks server yang sedang dipakai
 
     def panggil(self, nama_rpc, request, timeout=2.0):
-        """Panggil RPC unary; jika server UNAVAILABLE, coba server berikutnya."""
+        """Panggil RPC unary; jika server tidak tersedia atau timeout, coba berikutnya."""
         n = len(self.stub)
         for geser in range(n):
             i = (self.aktif + geser) % n
@@ -34,9 +34,10 @@ class KlienFailover:
                     self.aktif = i
                 return respons, call
             except grpc.RpcError as e:
-                if e.code() != grpc.StatusCode.UNAVAILABLE:
+                if e.code() not in (grpc.StatusCode.UNAVAILABLE,
+                                    grpc.StatusCode.DEADLINE_EXCEEDED):
                     raise  # kesalahan aplikasi (NOT_FOUND, dll.) tidak perlu failover
-                print(f"  [UNAVAILABLE] {self.alamat[i]} tidak dapat dihubungi", flush=True)
+                print(f"  [{e.code().name}] {self.alamat[i]} tidak dapat dihubungi", flush=True)
         raise ConnectionError("Semua server tidak tersedia")
 
     def tutup(self):

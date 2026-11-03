@@ -1,0 +1,4 @@
+max_workers,waktu_total_s,throughput,latensi_ms
+1,20.134,9.93,1917.3
+4,5.036,39.72,483.1
+10,2.019,99.08,196.4
