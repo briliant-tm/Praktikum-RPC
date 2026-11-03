@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+// Versi 2: message Mahasiswa mendapat field baru `prodi = 4`.
+// Nama package dan service SAMA dengan versi 1 agar server baru melayani client lama.
+package akademik;
+
+service LayananNilai {
+  rpc GetMahasiswa (MahasiswaRequest) returns (Mahasiswa);
+}
+
+message MahasiswaRequest { string nim = 1; }
+message Mahasiswa { string nim = 1; string nama = 2; double ipk = 3; string prodi = 4; }
